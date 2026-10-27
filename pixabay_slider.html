@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixabay 이미지 슬라이더</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Malgun Gothic', sans-serif; background: #f1f4f9; color: #243044; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { margin: 0 0 14px; font-size: 24px; }
+
+  .form { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .form input { flex: 1 1 200px; padding: 10px 12px; font-size: 15px; border: 1px solid #c9d3e3; border-radius: 8px; }
+  button { padding: 10px 18px; font-size: 15px; border: none; border-radius: 8px; background: #4f7cff; color: #fff; cursor: pointer; }
+  button:hover:not(:disabled) { background: #3a64e0; }
+  button:disabled { background: #b9c4dd; cursor: default; }
+  #msg { min-height: 22px; margin: 6px 0 12px; font-size: 14px; color: #5a677d; }
+  #msg.err { color: #d33; }
+
+  .viewer { position: relative; background: #111; border-radius: 12px; overflow: hidden; aspect-ratio: 16 / 10; display: none; }
+  .viewer.on { display: block; }
+  .viewer img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .nav { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; padding: 0; font-size: 22px; background: rgba(0,0,0,.5); }
+  .nav.prev { left: 10px; } .nav.next { right: 10px; }
+  .caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 14px; background: linear-gradient(transparent, rgba(0,0,0,.7)); color: #fff; font-size: 13px; }
+
+  .thumbs { display: none; gap: 8px; margin-top: 10px; overflow-x: auto; padding-bottom: 6px; }
+  .thumbs.on { display: flex; }
+  .thumbs img { width: 76px; height: 56px; object-fit: cover; border-radius: 6px; border: 3px solid transparent; cursor: pointer; flex: none; opacity: .7; }
+  .thumbs img.active { border-color: #4f7cff; opacity: 1; }
+
+  .pager { display: none; align-items: center; justify-content: center; gap: 12px; margin-top: 12px; }
+  .pager.on { display: flex; }
+
+  details { background: #fff; border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 14px; line-height: 1.7; }
+  summary { cursor: pointer; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🖼️ Pixabay 이미지 슬라이더</h1>
+
+  <details>
+    <summary>🔑 API 키 발급 방법</summary>
+    <ol>
+      <li><a href="https://pixabay.com/" target="_blank" rel="noopener">pixabay.com</a> 접속 → 우측 상단 <b>Sign up</b>으로 무료 회원가입 후 로그인</li>
+      <li><a href="https://pixabay.com/api/docs/" target="_blank" rel="noopener">pixabay.com/api/docs</a> 접속</li>
+      <li>로그인 상태면 페이지의 파라미터 설명 중 <b>key (required)</b> 항목에 내 API 키가 표시됩니다.</li>
+      <li>그 키를 복사해 아래 입력창에 붙여 넣으세요.</li>
+    </ol>
+  </details>
+
+  <div class="form">
+    <input id="key" type="password" placeholder="Pixabay API Key" autocomplete="off">
+    <input id="q" type="text" placeholder="검색어 (예: jeju, 귤, sea)" value="jeju">
+    <button id="go">검색</button>
+  </div>
+  <div id="msg">API 키와 검색어를 입력하세요.</div>
+
+  <div class="viewer" id="viewer">
+    <img id="main" alt="">
+    <button class="nav prev" id="prev" aria-label="이전">‹</button>
+    <button class="nav next" id="next" aria-label="다음">›</button>
+    <div class="caption" id="cap"></div>
+  </div>
+  <div class="thumbs" id="thumbs"></div>
+
+  <div class="pager" id="pager">
+    <button id="pagePrev">◀ 이전 10개</button>
+    <span id="pageInfo"></span>
+    <button id="pageNext">다음 10개 ▶</button>
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const PER_PAGE = 10;
+  let page = 1, total = 0, hits = [], idx = 0, lastKey = '', lastQ = '';
+
+  async function load(p) {
+    const key = lastKey, q = lastQ;
+    $('msg').className = ''; $('msg').textContent = '불러오는 중...';
+    const url = `https://pixabay.com/api/?key=${encodeURIComponent(key)}&q=${encodeURIComponent(q)}` +
+                `&image_type=photo&per_page=${PER_PAGE}&page=${p}`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(res.status === 400 ? 'API 키가 올바르지 않거나 요청이 잘못되었습니다.' :
+                                   res.status === 429 ? '요청 한도를 초과했습니다. 잠시 후 다시 시도하세요.' :
+                                   `오류가 발생했습니다. (${res.status})`);
+      const data = await res.json();
+      if (!data.hits.length) throw new Error('검색 결과가 없습니다.');
+      page = p; total = data.totalHits; hits = data.hits; idx = 0;
+      $('msg').textContent = `"${q}" 검색 결과 ${total}장`;
+      render();
+    } catch (e) {
+      $('msg').className = 'err';
+      $('msg').textContent = e.message.includes('Failed to fetch') ? '네트워크 오류입니다. 연결을 확인하세요.' : e.message;
+    }
+  }
+
+  function render() {
+    const h = hits[idx];
+    $('viewer').classList.add('on'); $('thumbs').classList.add('on'); $('pager').classList.add('on');
+    $('main').src = h.largeImageURL || h.webformatURL;
+    $('main').alt = h.tags;
+    $('cap').textContent = `${idx + 1} / ${hits.length} · ${h.tags} · by ${h.user}`;
+    $('thumbs').innerHTML = '';
+    hits.forEach((x, i) => {
+      const t = document.createElement('img');
+      t.src = x.previewURL; t.alt = x.tags;
+      if (i === idx) t.className = 'active';
+      t.onclick = () => { idx = i; render(); };
+      $('thumbs').appendChild(t);
+    });
+    const maxPage = Math.ceil(Math.min(total, 500) / PER_PAGE); // Pixabay는 검색당 최대 500개
+    $('pageInfo').textContent = `${page} / ${maxPage} 페이지`;
+    $('pagePrev').disabled = page <= 1;
+    $('pageNext').disabled = page >= maxPage;
+  }
+
+  function slide(d) { idx = (idx + d + hits.length) % hits.length; render(); }
+
+  $('go').onclick = () => {
+    lastKey = $('key').value.trim(); lastQ = $('q').value.trim();
+    if (!lastKey) { $('msg').className = 'err'; $('msg').textContent = 'API 키를 입력하세요.'; return; }
+    if (!lastQ) { $('msg').className = 'err'; $('msg').textContent = '검색어를 입력하세요.'; return; }
+    load(1);
+  };
+  ['key', 'q'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') $('go').click(); }));
+  $('prev').onclick = () => slide(-1);
+  $('next').onclick = () => slide(1);
+  $('pagePrev').onclick = () => load(page - 1);
+  $('pageNext').onclick = () => load(page + 1);
+  addEventListener('keydown', e => {
+    if (!hits.length || e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowLeft') slide(-1);
+    if (e.key === 'ArrowRight') slide(1);
+  });
+</script>
+</body>
+</html>

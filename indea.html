@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 취향 카드</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Malgun Gothic', sans-serif;
+    background: #f1f4f9;
+    color: #243044;
+    line-height: 1.6;
+  }
+
+  /* 헤더 */
+  header {
+    background: linear-gradient(135deg, #4f7cff, #8a5cff);
+    color: #fff;
+    text-align: center;
+    padding: 40px 16px 32px;
+  }
+  header h1 { margin: 0 0 6px; font-size: 32px; }
+  header p { margin: 0; opacity: .9; }
+
+  /* 네비게이션 */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  nav ul {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 900px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  nav a {
+    display: block;
+    padding: 14px 16px;
+    color: #243044;
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: 3px solid transparent;
+  }
+  nav a:hover, nav a.active { color: #4f7cff; border-bottom-color: #4f7cff; }
+
+  /* 바디 */
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 40px; }
+  section { margin-bottom: 36px; scroll-margin-top: 60px; }
+  section > h2 { margin: 0 0 14px; font-size: 22px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px 18px;
+    box-shadow: 0 4px 14px rgba(30,50,90,.10);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(30,50,90,.16); }
+  .card .icon { font-size: 40px; }
+  .card h3 { margin: 8px 0 6px; font-size: 18px; }
+  .card p { margin: 0; font-size: 14px; color: #5a677d; }
+
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { padding: 8px 0; border-bottom: 1px dashed #dde3ee; }
+  .list li:last-child { border-bottom: none; }
+  .slogans { margin-top: 18px; text-align: center; font-weight: bold; color: #4f7cff; }
+
+  /* 좋아요 카운터 */
+  .like { text-align: center; }
+  #count { font-size: 48px; font-weight: bold; color: #4f7cff; }
+  button {
+    margin-top: 8px;
+    font-size: 16px;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 999px;
+    background: #4f7cff;
+    color: #fff;
+    cursor: pointer;
+  }
+  button:hover { background: #3a64e0; }
+
+  /* 푸터 */
+  footer {
+    background: #243044;
+    color: #cfd8e8;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 14px;
+  }
+  footer .links a { color: #fff; margin: 0 8px; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎴 내 취향 카드</h1>
+  <p>🌊 제주대학교 홍보 카드 · 꿈이 자라는 곳 🍊</p>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#about" class="active">소개</a></li>
+    <li><a href="#vision">비전</a></li>
+    <li><a href="#study">학업</a></li>
+    <li><a href="#campus">캠퍼스</a></li>
+    <li><a href="#jeju">제주</a></li>
+    <li><a href="#future">진로</a></li>
+    <li><a href="#join">입학</a></li>
+    <li><a href="#like">좋아요</a></li>
+  </ul>
+</nav>
+
+<main>
+  <section id="about">
+    <h2>👤 제주대학교를 소개합니다</h2>
+    <div class="card">
+      <ul class="list">
+        <li>🌊 한라산의 정기와 푸른 바다가 어우러진 곳, 제주대학교입니다.</li>
+        <li>🏛️ 제주를 대표하는 국립대학으로 지역과 함께 성장해 왔습니다.</li>
+        <li>🌱 꿈을 키우고 미래를 설계하는 배움의 터전입니다.</li>
+        <li>🤝 지역과 세계를 잇는 열린 대학을 지향합니다.</li>
+        <li>📚 깊이 있는 학문과 폭넓은 경험을 함께 제공합니다.</li>
+        <li>🌍 제주에서 세계로, 세계에서 제주로 연결됩니다.</li>
+        <li>💡 호기심이 연구가 되고, 연구가 세상을 바꿉니다.</li>
+        <li>🎓 사람 중심의 교육으로 따뜻한 인재를 길러 냅니다.</li>
+        <li>🏝️ 자연과 학문이 만나는 특별한 캠퍼스입니다.</li>
+        <li>✨ 당신의 가능성을 제주대학교가 응원합니다.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="vision">
+    <h2>🎯 우리의 비전</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h3>미래를 여는 대학</h3>
+        <p>변화하는 시대에 앞서 나가는 교육과 연구를 추구합니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🌿</div>
+        <h3>자연과 공존하는 대학</h3>
+        <p>청정 제주의 가치를 배우고 지켜 가는 인재를 키웁니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🤲</div>
+        <h3>지역과 함께하는 대학</h3>
+        <p>지역사회의 문제를 함께 고민하고 해결책을 찾습니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🌐</div>
+        <h3>세계로 나아가는 대학</h3>
+        <p>국제 교류를 통해 더 넓은 시야를 갖게 합니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧠</div>
+        <h3>창의 융합 교육</h3>
+        <p>전공의 경계를 넘나드는 새로운 배움을 설계합니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">💙</div>
+        <h3>존중과 배려의 공동체</h3>
+        <p>서로의 다름을 인정하고 함께 성장하는 문화를 만듭니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="study">
+    <h2>📚 배우는 즐거움</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">📖</div>
+        <h3>탄탄한 기초 교육</h3>
+        <p>전공의 뿌리를 단단히 다지는 체계적인 수업이 준비되어 있습니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔬</div>
+        <h3>연구하는 즐거움</h3>
+        <p>학부생도 연구 활동에 참여하며 학문의 재미를 느낍니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧑‍🏫</div>
+        <h3>가까운 교수와 학생</h3>
+        <p>질문하고 토론하며 성장하는 열린 강의실을 지향합니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">💻</div>
+        <h3>디지털 역량 강화</h3>
+        <p>변화하는 기술을 활용할 수 있는 실무형 능력을 키웁니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🌏</div>
+        <h3>글로벌 학습 기회</h3>
+        <p>교환학생과 어학 프로그램으로 세계를 경험합니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧪</div>
+        <h3>실험과 실습 중심</h3>
+        <p>이론에서 그치지 않고 직접 해 보며 배웁니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🗣️</div>
+        <h3>소통과 발표 역량</h3>
+        <p>토론과 팀 프로젝트로 협업하는 힘을 기릅니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏅</div>
+        <h3>학습 지원 프로그램</h3>
+        <p>학업을 끝까지 돕는 다양한 지원 제도를 마련합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="campus">
+    <h2>🌸 캠퍼스 라이프</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">🌸</div>
+        <h3>사계절이 아름다운 캠퍼스</h3>
+        <p>봄에는 꽃길, 가을에는 단풍길을 걸으며 일상을 즐깁니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">⛰️</div>
+        <h3>한라산이 보이는 풍경</h3>
+        <p>수업이 끝나면 고개를 들어 한라산을 바라보세요.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎭</div>
+        <h3>다채로운 동아리 활동</h3>
+        <p>취미와 재능을 나누며 평생 친구를 만납니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎉</div>
+        <h3>함께 만드는 축제</h3>
+        <p>학생이 주인공이 되어 즐기는 캠퍼스 축제가 열립니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏃</div>
+        <h3>건강한 캠퍼스 라이프</h3>
+        <p>운동과 취미로 에너지를 채우는 시간을 가집니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">☕</div>
+        <h3>쉼이 있는 공간</h3>
+        <p>친구와 이야기하고 휴식하는 아늑한 장소가 가득합니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📚</div>
+        <h3>도서관에서의 몰입</h3>
+        <p>집중해서 공부하고 생각을 키우는 배움의 공간입니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🚌</div>
+        <h3>편리한 학교생활</h3>
+        <p>제주 곳곳과 이어지는 이동으로 일상이 편리합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="jeju">
+    <h2>🍊 제주에서만 누리는 특별함</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">🍊</div>
+        <h3>제주의 맛과 함께</h3>
+        <p>감귤과 흑돼지 등 제주의 먹거리를 가까이에서 즐깁니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🌊</div>
+        <h3>바다가 가까운 대학</h3>
+        <p>주말이면 바다로 떠나는 여유로운 대학 생활을 누립니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🌋</div>
+        <h3>살아 있는 학습 현장</h3>
+        <p>화산섬 제주의 자연이 곧 교실이 됩니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏝️</div>
+        <h3>사계절 즐기는 여행지</h3>
+        <p>오름, 해변, 숲길까지 일상이 곧 여행이 됩니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">👩‍🦰</div>
+        <h3>해녀 문화와 전통</h3>
+        <p>제주의 역사와 문화를 배우고 이어 갑니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🌬️</div>
+        <h3>청정한 환경</h3>
+        <p>맑은 공기와 푸른 하늘이 공부의 능률을 높여 줍니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>풍부한 문화 자원</h3>
+        <p>예술과 축제가 가득한 섬에서 감성을 키웁니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧡</div>
+        <h3>따뜻한 지역 공동체</h3>
+        <p>이웃의 정이 넘치는 제주에서 든든하게 생활합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="future">
+    <h2>🚀 진로와 미래</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">🚀</div>
+        <h3>도전하는 졸업생</h3>
+        <p>전공을 살려 다양한 분야로 힘차게 나아갑니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏢</div>
+        <h3>현장 중심 진로 지원</h3>
+        <p>취업과 진학을 돕는 상담과 프로그램이 준비되어 있습니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🌱</div>
+        <h3>창업 도전 응원</h3>
+        <p>아이디어를 현실로 만들 수 있도록 함께 고민합니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔗</div>
+        <h3>동문 네트워크</h3>
+        <p>선배와 후배가 서로 이끌어 주는 든든한 인맥입니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🏛️</div>
+        <h3>지역의 일꾼으로</h3>
+        <p>제주의 미래를 이끄는 책임감 있는 인재로 성장합니다.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🌍</div>
+        <h3>세계로 향하는 길</h3>
+        <p>더 큰 무대에서 활약할 수 있는 역량을 갖춥니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="join">
+    <h2>🎓 이런 분을 기다립니다</h2>
+    <div class="card">
+      <ul class="list">
+        <li>✅ 배우고 싶은 전공이 있다면 제주대학교와 함께하세요.</li>
+        <li>✅ 자연 속에서 공부하고 싶다면 제주대학교가 정답입니다.</li>
+        <li>✅ 지역과 세계를 모두 경험하고 싶은 분을 환영합니다.</li>
+        <li>✅ 연구와 탐구가 좋은 분을 기다립니다.</li>
+        <li>✅ 새로운 사람들과 함께 성장하고 싶은 분을 응원합니다.</li>
+        <li>✅ 안정적인 학업 환경을 원하는 분께 추천합니다.</li>
+        <li>✅ 도전하는 용기가 있는 분이라면 누구든 환영합니다.</li>
+        <li>✅ 제주의 문화와 사람이 좋은 분과 잘 어울립니다.</li>
+        <li>✅ 꿈을 향해 한 걸음 내딛고 싶은 분을 기다립니다.</li>
+        <li>✅ 입학 정보는 제주대학교 공식 홈페이지에서 확인하세요.</li>
+      </ul>
+      <ul class="list slogans">
+        <li>🌟 제주대학교, 꿈이 자라는 곳</li>
+        <li>🌟 제주대학교, 함께라서 빛나는 곳</li>
+        <li>🌟 제주대학교, 자연에서 배우는 미래</li>
+        <li>🌟 제주대학교, 지역과 세계를 잇다</li>
+        <li>🌟 제주대학교, 당신의 도전을 응원합니다</li>
+        <li>🌟 제주대학교, 오늘이 기대되는 배움터</li>
+        <li>🌟 제주대학교, 가능성을 현실로</li>
+        <li>🌟 제주대학교, 지금 만나요! 🎓</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="like">
+    <h2>👍 좋아요</h2>
+    <div class="card like">
+      <div id="count">0</div>
+      <button id="btn">좋아요 누르기</button>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="links">
+    <a href="#about">소개</a>
+    <a href="#vision">비전</a>
+    <a href="#study">학업</a>
+    <a href="#campus">캠퍼스</a>
+    <a href="#jeju">제주</a>
+    <a href="#future">진로</a>
+    <a href="#join">입학</a>
+    <a href="#like">좋아요</a>
+  </div>
+  <p>© 2026 내 취향 카드 · Made with 💙</p>
+</footer>
+
+<script>
+  const step = 100;   // 한 번 누를 때 증가하는 값
+  let count = 0;
+  const el = document.getElementById('count');
+  document.getElementById('btn').addEventListener('click', () => {
+    count += step;
+    el.textContent = count;
+  });
+
+  // 스크롤 위치에 따라 네비게이션 강조
+  const links = document.querySelectorAll('nav a');
+  const sections = [...links].map(a => document.querySelector(a.getAttribute('href')));
+  addEventListener('scroll', () => {
+    let idx = 0;
+    sections.forEach((s, i) => { if (s.getBoundingClientRect().top < 120) idx = i; });
+    links.forEach((a, i) => a.classList.toggle('active', i === idx));
+  });
+</script>
+</body>
+</html>
