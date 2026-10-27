@@ -306,13 +306,142 @@
 
 <button id="chatBtn">💬 채팅</button>
 <div id="chatPanel"><iframe id="chatFrame" title="제주 특산물 에이전트 채팅"></iframe></div>
+<template id="agentTpl">
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제주 특산물 에이전트</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    background: #eef2f7;
+    font-family: 'Malgun Gothic', sans-serif;
+  }
+  .chat {
+    width: 100%;
+    max-width: 520px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0,0,0,.08);
+  }
+  header {
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #ff9a3c, #ff6b3c);
+    color: #fff;
+    font-weight: bold;
+    font-size: 17px;
+  }
+  header small { display: block; font-weight: normal; opacity: .9; font-size: 12px; }
+
+  #log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f7f9fc;
+  }
+  .msg {
+    max-width: 78%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    line-height: 1.5;
+    font-size: 15px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .msg.me { align-self: flex-end; background: #ff7a3c; color: #fff; border-bottom-right-radius: 4px; }
+  .msg.bot { align-self: flex-start; background: #fff; border: 1px solid #e3e8ef; border-bottom-left-radius: 4px; }
+
+  form { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid #e3e8ef; }
+  input {
+    flex: 1;
+    padding: 11px 14px;
+    font-size: 15px;
+    border: 1px solid #cfd8e3;
+    border-radius: 999px;
+    outline: none;
+  }
+  input:focus { border-color: #ff7a3c; }
+  button {
+    padding: 0 20px;
+    border: none;
+    border-radius: 999px;
+    background: #ff7a3c;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  button:hover { background: #e8662a; }
+
+  .note { padding: 6px 12px 10px; text-align: center; font-size: 11px; color: #8a96a8; }
+</style>
+</head>
+<body>
+<div class="chat">
+  <header>🍊 제주 특산물 에이전트<small>제주도 특산물에 대해서 알아보는 기능</small></header>
+  <div id="log"></div>
+  <form id="form">
+    <input id="input" type="text" placeholder="메시지를 입력하세요" autocomplete="off">
+    <button type="submit">보내기</button>
+  </form>
+  <div class="note">※ 지금 답변은 미리 정해 둔 가짜 답변입니다 (데모)</div>
+</div>
+
+<script>
+  const log = document.getElementById('log');
+  const form = document.getElementById('form');
+  const input = document.getElementById('input');
+
+  // 에이전트 답변 3개를 차례로 돌려 쓴다
+  const replies = [
+    '안녕하세요, 하늘님! 🍊 저는 제주도 특산물을 알아봐 드리는 에이전트예요.\n귤, 흑돼지, 한라봉 중 어떤 게 궁금하세요?',
+    '그럼 제주 여행에서는 감귤 따기 체험을 추천드려요! 🧺\n직접 따서 맛보는 재미가 있고, 날씨 좋은 날 가면 더 좋아요.',
+    '아직 공부 중이에요! 5일차에 진짜로 알아볼게요.',
+  ];
+  let turn = 0;
+
+  function add(text, who) {
+    const el = document.createElement('div');
+    el.className = 'msg ' + who;
+    el.textContent = text;
+    log.appendChild(el);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+    add(text, 'me');            // 내 말: 오른쪽 말풍선
+    input.value = '';
+    const reply = replies[turn % replies.length];
+    turn++;
+    setTimeout(() => add(reply, 'bot'), 1000);   // 1초 뒤 에이전트 답: 왼쪽 말풍선
+  });
+
+  input.focus();
+</script>
+</body>
+</html>
+</template>
 
 <script>
   // 버튼을 누르면 agent.html 을 불러와 채팅 화면을 연다
   document.getElementById('chatBtn').onclick = () => {
     const panel = document.getElementById('chatPanel');
     const frame = document.getElementById('chatFrame');
-    if (!frame.getAttribute('src')) frame.src = 'agent.html';
+    // agent.html 내용을 담은 <template> 을 채팅 창에서 실행한다 (파일 경로와 무관하게 동작)
+    if (!frame.srcdoc) frame.srcdoc = document.getElementById('agentTpl').innerHTML;
     const open = panel.classList.toggle('on');
     document.getElementById('chatBtn').textContent = open ? '✖ 닫기' : '💬 채팅';
   };
